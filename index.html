@@ -66,10 +66,15 @@
           grid-template-columns: 1fr !important;
         }
 
-        [style*="display: flex"][style*="justify-content: space-between"] {
+        [style*="display: flex"][style*="justify-content: space-between"][style*="border-top"] {
           flex-direction: column !important;
           align-items: flex-start !important;
           gap: 16px !important;
+        }
+        
+        [style*="position: fixed"][style*="height: 64px"][style*="justify-content: space-between"] {
+          flex-direction: row !important;
+          align-items: center !important;
         }
 
         [style*="display: flex"][style*="gap: 16px"][style*="margin-bottom: 32px"] {
