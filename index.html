@@ -34,7 +34,7 @@
         :root {
           --page-padding: 40px;
         }
-
+      
         [style*="repeat(3, 1fr)"] {
           grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         }
@@ -44,7 +44,24 @@
         :root {
           --page-padding: 20px;
         }
+        
+        [style*="padding: 0px 48px"][style*="height: 64px"] {
+          padding-left: 20px !important;
+          padding-right: 20px !important;
+        }
 
+        [style*="list-style: none"][style*="gap: 32px"] {
+          display: none !important;
+        }
+
+        [style*="grid-template-columns: 1fr 360px"] {
+          grid-template-columns: 1fr !important;
+          gap: 24px !important;
+        }
+
+        [style*="grid-template-columns: 1fr 340px"] {
+          grid-template-columns: 1fr !important;
+        }
         [style*="grid-template-columns: 260px 1fr"] {
           grid-template-columns: 1fr !important;
         }
