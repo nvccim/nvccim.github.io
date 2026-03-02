@@ -9,6 +9,58 @@
       body {
         margin: 0;
       }
+      :root {
+        --page-padding: 80px;
+      }
+
+      #root img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      section,
+      footer {
+        padding-left: var(--page-padding) !important;
+        padding-right: var(--page-padding) !important;
+      }
+
+      @media (max-width: 1024px) {
+        :root {
+          --page-padding: 40px;
+        }
+
+        [style*="repeat(3, 1fr)"] {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --page-padding: 20px;
+        }
+
+        [style*="grid-template-columns: 260px 1fr"] {
+          grid-template-columns: 1fr !important;
+        }
+
+        [style*="display: flex"][style*="justify-content: space-between"] {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 16px !important;
+        }
+
+        [style*="repeat(3, 1fr)"] {
+          grid-template-columns: 1fr !important;
+        }
+
+        [style*="padding: 36px 40px"] {
+          padding: 24px 20px !important;
+        }
+
+        [style*="padding: 28px 32px"] {
+          padding: 20px !important;
+        }
+      }
     </style>
     <script type="module" crossorigin src="/assets/index-N1RLYiA-.js"></script>
   </head>
