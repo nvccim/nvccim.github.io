@@ -50,8 +50,21 @@
           padding-right: 20px !important;
         }
 
-        [style*="list-style: none"][style*="gap: 32px"] {
-          display: none !important;
+        [style*="position: fixed"][style*="height: 64px"] [style*="list-style: none"][style*="gap: 32px"] {
+          display: flex !important;
+          gap: 14px !important;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        [style*="position: fixed"][style*="height: 64px"] [style*="list-style: none"][style*="gap: 32px"]::-webkit-scrollbar {
+          display: none;
+        }
+
+        [style*="position: fixed"][style*="height: 64px"] [style*="list-style: none"][style*="gap: 32px"] li {
+          flex: 0 0 auto;
+          font-size: 11px !important;
         }
 
         [style*="grid-template-columns: 1fr 360px"] {
