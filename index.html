@@ -8,9 +8,15 @@
     <style>
       body {
         margin: 0;
+        overflow-x: hidden;
       }
       :root {
         --page-padding: 80px;
+      }
+
+      #root,
+      #root * {
+        box-sizing: border-box;
       }
 
       #root img {
@@ -49,6 +55,11 @@
           gap: 16px !important;
         }
 
+        [style*="display: flex"][style*="gap: 16px"][style*="margin-bottom: 32px"] {
+          flex-wrap: wrap !important;
+          row-gap: 8px !important;
+        }
+
         [style*="repeat(3, 1fr)"] {
           grid-template-columns: 1fr !important;
         }
@@ -59,6 +70,38 @@
 
         [style*="padding: 28px 32px"] {
           padding: 20px !important;
+        }
+
+        [style*="white-space: nowrap"] {
+          white-space: normal !important;
+        }
+      }
+
+      @media (max-width: 430px) {
+        :root {
+          --page-padding: 14px;
+        }
+
+        section,
+        footer,
+        [style*="padding: 100px 80px"],
+        [style*="padding: 40px 80px"] {
+          padding-top: 72px !important;
+          padding-bottom: 72px !important;
+        }
+
+        footer {
+          padding-top: 28px !important;
+          padding-bottom: 28px !important;
+        }
+
+        [style*="font-size: 56px"] {
+          font-size: 36px !important;
+          line-height: 1.15 !important;
+        }
+
+        [style*="letter-spacing: 2px"] {
+          letter-spacing: 1px !important;
         }
       }
     </style>
