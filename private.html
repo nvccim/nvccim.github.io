@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Private Blog Submission — Nassim Chami</title>
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --panel: #13131c;
+        --panel-border: rgba(255, 255, 255, 0.08);
+        --text: #f2f2f6;
+        --muted: rgba(232, 232, 240, 0.6);
+        --accent: #e63946;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: radial-gradient(circle at top right, rgba(230,57,70,0.15), transparent 35%), var(--bg);
+        color: var(--text);
+      }
+      .container { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+      .topbar { display:flex; justify-content:space-between; align-items:center; gap: 12px; margin-bottom: 20px; }
+      .mono { font-family: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; }
+      .muted { color: var(--muted); }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 16px;
+      }
+      h1 { margin: 0; font-size: 24px; }
+      label { display:block; margin: 10px 0 6px; font-size: 13px; color: var(--muted); }
+      input, textarea, select {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font: inherit;
+      }
+      textarea { min-height: 140px; resize: vertical; }
+      .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+      @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+      .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+      button, .link-btn {
+        border: 1px solid rgba(230,57,70,0.35);
+        background: rgba(230,57,70,0.12);
+        color: #ffd4d8;
+        border-radius: 8px;
+        padding: 10px 14px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      button:hover, .link-btn:hover { background: rgba(230,57,70,0.2); }
+      .secondary {
+        border-color: rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.06);
+        color: var(--text);
+      }
+      .hidden { display: none !important; }
+      .item { padding: 12px; border: 1px solid rgba(255,255,255,0.08); border-radius:8px; margin-bottom:10px; }
+      .item h3 { margin: 0 0 6px; font-size: 17px; }
+      .item p { margin: 0; color: var(--muted); }
+      .status { min-height: 20px; margin-top: 10px; color: #99f6aa; }
+      .error { color: #ff8d8d; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <div>
+          <div class="mono muted" style="font-size:12px;">04 — BLOG & WRITE-UPS</div>
+          <h1>Private Blog Submission</h1>
+        </div>
+        <a class="link-btn secondary" href="/">← Back to portfolio</a>
+      </div>
+
+      <div id="authPanel" class="panel">
+        <div class="mono muted" style="font-size:12px; margin-bottom:8px;">PRIVATE ACCESS</div>
+        <label for="passcode">Passcode</label>
+        <input id="passcode" type="password" placeholder="Enter admin passcode" />
+        <div class="actions">
+          <button id="unlockBtn">Unlock</button>
+        </div>
+        <div id="authStatus" class="status"></div>
+      </div>
+
+      <div id="editorPanel" class="hidden">
+        <div class="panel">
+          <div class="mono muted" style="font-size:12px; margin-bottom:8px;">NEW POST</div>
+          <div class="row">
+            <div>
+              <label for="title">Title</label>
+              <input id="title" placeholder="Post title" />
+            </div>
+            <div>
+              <label for="tag">Tag</label>
+              <input id="tag" placeholder="e.g. Red Team, CTF, SOC" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="readTime">Read time</label>
+              <input id="readTime" placeholder="e.g. 6 min" />
+            </div>
+            <div>
+              <label for="visibility">Visibility</label>
+              <select id="visibility">
+                <option value="private">Private draft</option>
+                <option value="public">Public-ready</option>
+              </select>
+            </div>
+          </div>
+          <label for="content">Content</label>
+          <textarea id="content" placeholder="Write your blog content..."></textarea>
+          <div class="actions">
+            <button id="submitBtn">Submit blog</button>
+            <button id="clearBtn" class="secondary">Clear form</button>
+            <button id="exportBtn" class="secondary">Export as JSON</button>
+          </div>
+          <div id="postStatus" class="status"></div>
+        </div>
+
+        <div class="panel">
+          <div class="mono muted" style="font-size:12px; margin-bottom:12px;">SAVED SUBMISSIONS</div>
+          <div id="postsList" class="muted">No submissions yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const SECRET = 'nassim-admin';
+      const STORAGE_KEY = 'private-blog-submissions';
+
+      const authPanel = document.getElementById('authPanel');
+      const editorPanel = document.getElementById('editorPanel');
+      const authStatus = document.getElementById('authStatus');
+      const postStatus = document.getElementById('postStatus');
+      const postsList = document.getElementById('postsList');
+
+      function loadPosts() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        } catch {
+          return [];
+        }
+      }
+
+      function savePosts(posts) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+      }
+
+      function renderPosts() {
+        const posts = loadPosts();
+        if (!posts.length) {
+          postsList.textContent = 'No submissions yet.';
+          return;
+        }
+
+        postsList.innerHTML = posts
+          .map((post, idx) => `
+            <div class="item">
+              <h3>${post.title}</h3>
+              <p class="mono" style="font-size:11px; margin-bottom:8px;">${post.tag || 'General'} • ${post.readTime || 'n/a'} • ${post.visibility.toUpperCase()} • #${idx + 1}</p>
+              <p>${post.content.slice(0, 220).replace(/</g, '&lt;')}${post.content.length > 220 ? '…' : ''}</p>
+            </div>
+          `)
+          .join('');
+      }
+
+      document.getElementById('unlockBtn').addEventListener('click', () => {
+        const value = document.getElementById('passcode').value.trim();
+        if (value !== SECRET) {
+          authStatus.textContent = 'Invalid passcode.';
+          authStatus.classList.add('error');
+          return;
+        }
+        authStatus.textContent = 'Access granted.';
+        authStatus.classList.remove('error');
+        authPanel.classList.add('hidden');
+        editorPanel.classList.remove('hidden');
+        renderPosts();
+      });
+
+      document.getElementById('submitBtn').addEventListener('click', () => {
+        const title = document.getElementById('title').value.trim();
+        const tag = document.getElementById('tag').value.trim();
+        const readTime = document.getElementById('readTime').value.trim();
+        const visibility = document.getElementById('visibility').value;
+        const content = document.getElementById('content').value.trim();
+
+        if (!title || !content) {
+          postStatus.textContent = 'Title and content are required.';
+          postStatus.classList.add('error');
+          return;
+        }
+
+        const posts = loadPosts();
+        posts.unshift({
+          title,
+          tag,
+          readTime,
+          visibility,
+          content,
+          createdAt: new Date().toISOString(),
+        });
+        savePosts(posts);
+
+        postStatus.textContent = 'Blog submitted and saved locally.';
+        postStatus.classList.remove('error');
+        renderPosts();
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        ['title', 'tag', 'readTime', 'content'].forEach(id => (document.getElementById(id).value = ''));
+        document.getElementById('visibility').value = 'private';
+        postStatus.textContent = 'Form cleared.';
+        postStatus.classList.remove('error');
+      });
+
+      document.getElementById('exportBtn').addEventListener('click', () => {
+        const posts = loadPosts();
+        const blob = new Blob([JSON.stringify(posts, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'blog-submissions.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    </script>
+  </body>
+</html>
