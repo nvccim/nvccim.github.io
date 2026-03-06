@@ -139,10 +139,40 @@
           letter-spacing: 1px !important;
         }
       }
+      
+      .private-blog-link {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 9999;
+        border: 1px solid rgba(230,57,70,0.35);
+        background: rgba(230,57,70,0.16);
+        color: #ffd4d8;
+        text-decoration: none;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 1px;
+        padding: 10px 12px;
+        border-radius: 8px;
+      }
+
+      .private-blog-link:hover {
+        background: rgba(230,57,70,0.24);
+      }
     </style>
     <script type="module" crossorigin src="/assets/index-N1RLYiA-.js"></script>
   </head>
   <body>
     <div id="root"></div>
+
+     <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const link = document.createElement('a');
+        link.href = '/private-blog.html';
+        link.className = 'private-blog-link';
+        link.textContent = 'Private Blog Admin';
+        document.body.appendChild(link);
+      });
+    </script>
   </body>
 </html>
